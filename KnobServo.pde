@@ -96,7 +96,7 @@ void loop()
   // ^ using the potentiometer to change the setpoint
 
   Kp = map(val2, 0, 1023, 0, 300);
-  Kp = Kp / 1000.0;
+  Kp = Kp / 10000.0;
 
   Serial.print("Pot1: ");
   Serial.print(val);
