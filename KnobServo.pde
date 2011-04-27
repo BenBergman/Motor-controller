@@ -12,9 +12,9 @@
 #include <Servo.h> 
 #include <PID_v1.h>
 
-#define Kp 0.03
-#define Ki 0.1
-#define Kd 0.00
+double Kp = 0.00;
+double Ki = 0.00;
+double Kd = 0.00;
 
 #define MAX_RPM 4000
 #define MIN_RPM 1200
@@ -95,6 +95,9 @@ void loop()
   Setpoint = map(val, 0, 1023, MIN_RPM, MAX_RPM);     // scale it to use it with the servo (value between 0 and 180) 
   // ^ using the potentiometer to change the setpoint
 
+  Kp = map(val2, 0, 1023, 0, 300);
+  Kp = Kp / 1000.0;
+
   Serial.print("Pot1: ");
   Serial.print(val);
   Serial.print("  ");
@@ -103,6 +106,10 @@ void loop()
   Serial.print("  ");
   Serial.print("Pot2: ");
   Serial.print(val2);
+  Serial.print("  ");
+  Serial.print("Kp: ");
+  Serial.print(Kp);
+  
 
   myservo.write(Output);                  // sets the servo position according to the scaled value; 0-179 deg
   
@@ -111,7 +118,7 @@ void loop()
     // Update RPM every 20 counts, increase this for better RPM resolution,
     // decrease for faster update (adjust rpm calc as needed)
 
-    Serial.print("Pot: ");
+    Serial.print("  -  Pot: ");
     Serial.print(val, DEC);
     Serial.print("  rpmcount: ");
     Serial.print(rpmcount, DEC);
