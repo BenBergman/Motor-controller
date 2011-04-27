@@ -108,7 +108,7 @@ void loop()
   Serial.print(val2);
   Serial.print("  ");
   Serial.print("Kp: ");
-  Serial.print(Kp);
+  Serial.print(Kp, 4);
   
 
   myservo.write(Output);                  // sets the servo position according to the scaled value; 0-179 deg
