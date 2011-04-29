@@ -20,6 +20,8 @@ double Kd = 0.00;
 #define MIN_RPM 1200
 #define SERVO_PIN 54
 #define FAKE_SERVO 5
+#define CRIO_RPM_MAX 6000
+#define CRIO_RPM_MIN 0
 int pwm;
  
 Servo myservo;  // create servo object to control a servo 
@@ -42,6 +44,7 @@ PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, PID_DIRECTION);  // create PID
 const int potpin = 5;  // analog pin used to connect the potentiometer
 const int potpin2 = 4;
 const int HALL_INTERRUPT = 4;
+const int RPM_PIN = 3; // analog pin
 int val;    // variable to read the value from the analog pin 
 int val2;
 
@@ -83,11 +86,14 @@ void setup()
 
 void rpm_fun()
 {
-  rpmcount++;
+  //rpmcount++;
 }
  
 void loop() 
 { 
+  rpm = analogRead(RPM_PIN);
+  rpm = map(rpm, 0, 1023, CRIO_RPM_MIN, CRIO_RPM_MAX);
+
   val = analogRead(potpin);            // reads the value of the potentiometer (value between 0 and 1023) 
   val2 = analogRead(potpin2);            // reads the value of the potentiometer (value between 0 and 1023) 
 
@@ -98,6 +104,9 @@ void loop()
   Kp = map(val2, 0, 1023, 0, 300);
   Kp = Kp / 10000.0;
 
+  Serial.print("RPM: ");
+  Serial.print(rpm);
+  Serial.print("  ");
   Serial.print("Pot1: ");
   Serial.print(val);
   Serial.print("  ");
@@ -110,9 +119,18 @@ void loop()
   Serial.print("Kp: ");
   Serial.print(Kp, 4);
   
+  //updateRPM();
 
   myservo.write(Output);                  // sets the servo position according to the scaled value; 0-179 deg
   
+
+  Serial.println();
+
+  delay(15);                           // waits for the servo to get there 
+} 
+
+void updateRPM()
+{
   if (rpmcount >= 20)
   {
     // Update RPM every 20 counts, increase this for better RPM resolution,
@@ -165,8 +183,5 @@ void loop()
     pwm = Output;
     analogWrite(FAKE_SERVO, pwm);
   }
+}
 
-  Serial.println();
-
-  delay(15);                           // waits for the servo to get there 
-} 
